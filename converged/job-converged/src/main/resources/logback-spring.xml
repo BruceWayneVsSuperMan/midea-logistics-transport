@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--<include resource="org/springframework/boot/logging/logback/base.xml" />-->
+    <springProperty scope="context" name="spring.application.name" source="spring.application.name"/>
+    <conversionRule conversionWord="ip" converterClass="com.mideaframework.core.config.IPLogConfig"/>
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS}|%ip|%level|${spring.application.name}|%X{traceId}|%X{spanId}|%logger{36}|%-3L|%msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>logs/${spring.application.name}.log</File>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %d{HH:mm:ss.SSS}|%ip|%level|${spring.application.name}|%X{traceId}|%X{spanId}|%logger{36}|%-3L|%msg%n
+            </pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>logs/bak/${spring.application.name}.%d{yyyy-MM-dd}.%i.log
+            </FileNamePattern>
+            <!--日志文件保留天数-->
+            <maxHistory>60</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 500MB -->
+                <maxFileSize>500MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="logistics_mq" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/${spring.application.name}-mq.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/bak/${spring.application.name}-mq.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <!--日志文件保留天数-->
+            <maxHistory>60</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 500MB -->
+                <maxFileSize>500MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS}|%ip|%level|${spring.application.name}|%X{traceId}|%X{spanId}|%logger{36}|%-3L|%msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <logger name="logistics_mq" level="INFO">
+        <appender-ref ref="logistics_mq"/>
+    </logger>
+
+    <appender name="logistics_rest" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/${spring.application.name}-rest.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/bak/${spring.application.name}-rest.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <!--日志文件保留天数-->
+            <maxHistory>60</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 500MB -->
+                <maxFileSize>500MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                [%d{HH:mm:ss.SSS}|%ip|%level|${spring.application.name}|%X{traceId}|%X{spanId}|%logger{36}|%-3L]%msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <logger name="logistics_rest" level="INFO">
+        <appender-ref ref="logistics_rest"/>
+    </logger>
+    <springProfile name="dev">
+        <root level="INFO">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file"/>
+        </root>
+    </springProfile>
+    <springProfile name="sit">
+        <root level="INFO">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file"/>
+        </root>
+    </springProfile>
+    <springProfile name="uat">
+        <root level="INFO">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file"/>
+        </root>
+    </springProfile>
+    <springProfile name="ver">
+        <root level="INFO">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file"/>
+        </root>
+    </springProfile>
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file"/>
+        </root>
+    </springProfile>
+</configuration>

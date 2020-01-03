@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.midea.logistics.lpc.atomic.gen.mapper.GenLogMapper">
+
+    <!-- 常规查询字段集(不包含BLOB) -->
+    <sql id="selectFields">
+        `id`,
+      `create_user_code`,
+      `create_time`,
+      `update_user_code`,
+      `update_time`,
+      `delete_flag`,
+      `version`,
+      `remark`,
+      `project_id`,
+      `auth_code`,
+      `gen_path`
+    </sql>
+
+
+    <!-- 常规插入字段集(不包含BLOB和id字段) -->
+    <sql id="insertFields">
+        `create_user_code`,
+      `update_user_code`,
+      `delete_flag`,
+      `version`,
+      `remark`,
+      `project_id`,
+      `auth_code`,
+      `gen_path`
+    </sql>
+
+
+    <!-- updateAll语句 设置字段集(包含BLOB) -->
+    <sql id="setAllFieldsSql">
+        <trim suffixOverrides=",">
+            `version` = `version` + 1,
+            `create_user_code` = #{createUserCode},
+            `create_time` = #{createTime},
+            `update_user_code` = #{updateUserCode},
+            `update_time` = #{updateTime},
+            `delete_flag` = #{deleteFlag},
+            `remark` = #{remark},
+            `project_id` = #{projectId},
+            `auth_code` = #{authCode},
+            `gen_path` = #{genPath},
+        </trim>
+    </sql>
+
+    <!-- updateSelective语句 设置字段集(包含BLOB) -->
+    <sql id="setSelectiveFieldsSql">
+        <trim suffixOverrides=",">
+            `version` = `version` + 1 ,
+            <if test="createUserCode !=null">`create_user_code` = #{createUserCode},</if>
+            <if test="createTime !=null">`create_time` = #{createTime},</if>
+            <if test="updateUserCode !=null">`update_user_code` = #{updateUserCode},</if>
+            <if test="updateTime !=null">`update_time` = #{updateTime},</if>
+            <if test="deleteFlag !=null">`delete_flag` = #{deleteFlag},</if>
+            <if test="remark !=null">`remark` = #{remark},</if>
+            <if test="projectId !=null">`project_id` = #{projectId},</if>
+            <if test="authCode !=null">`auth_code` = #{authCode},</if>
+            <if test="genPath !=null">`gen_path` = #{genPath},</if>
+        </trim>
+    </sql>
+
+    <!-- where 条件集 -->
+    <sql id="where">
+        WHERE
+        `delete_flag` = 0
+        <if test="ids != null and ids.size > 0">
+            AND `id` IN
+            <foreach collection="ids" item="item" open="(" separator="," close=")">#{item}</foreach>
+        </if>
+        <if test="startTime != null">AND `create_time` &gt;= #{startTime}</if>
+        <if test="endTime != null">AND `end_time` &lt;= #{endTime}</if>
+        <if test="id != null">AND `id` = #{id}</if>
+        <if test="createUserCode != null">AND `create_user_code` = #{createUserCode}</if>
+        <if test="createTime != null">AND `create_time` = #{createTime}</if>
+        <if test="updateUserCode != null">AND `update_user_code` = #{updateUserCode}</if>
+        <if test="updateTime != null">AND `update_time` = #{updateTime}</if>
+        <if test="version != null">AND `version` = #{version}</if>
+        <if test="remark != null">AND `remark` = #{remark}</if>
+        <if test="projectId != null">AND `project_id` = #{projectId}</if>
+        <if test="authCode != null">AND `auth_code` = #{authCode}</if>
+        <if test="genPath != null">AND `gen_path` = #{genPath}</if>
+    </sql>
+
+    <!-- 排序和分页查询sql -->
+    <sql id="orderByAndLimitSql">
+        <if test="orderBy != null and orderByType != null">
+            order by ${orderBy} ${orderByType}
+        </if>
+        <if test="pageNo != null and pageNo > 0 and pageSize != null and pageSize > 0">
+            <bind name="offset" value="(pageNo - 1) * pageSize"/>
+            limit #{offset}, #{pageSize}
+        </if>
+    </sql>
+
+    <!-- count 统计 -->
+    <select id="count" parameterType="com.midea.logistics.lpc.domain.gen.entity.GenLog" resultType="java.lang.Integer">
+        SELECT
+        count(*) count
+        FROM
+        gen_log
+        <include refid="where"/>
+    </select>
+
+    <!-- getById 主键查询 -->
+    <select id="getById" parameterType="java.lang.Long" resultType="com.midea.logistics.lpc.domain.gen.entity.GenLog">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        gen_log
+        WHERE
+        `id` = #{id}
+        AND `delete_flag` = 0
+    </select>
+
+    <!-- getByEntity 对象查询，要求唯一 -->
+    <select id="getByEntity" parameterType="com.midea.logistics.lpc.domain.gen.entity.GenLog"
+            resultType="com.midea.logistics.lpc.domain.gen.entity.GenLog">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        gen_log
+        <include refid="where"/>
+    </select>
+
+    <!-- insert 新增(忽略id的存在性) -->
+    <insert id="insert" parameterType="com.midea.logistics.lpc.domain.gen.entity.GenLog">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO gen_log (
+        <include refid="insertFields"/>
+        ) VALUES (
+        #{createUserCode},
+        #{updateUserCode},
+        #{deleteFlag},
+        #{version},
+        #{remark},
+        #{projectId},
+        #{authCode},
+        #{genPath}
+        )
+    </insert>
+
+    <!-- insertBatch 批量新增(忽略id的存在性) -->
+    <insert id="insertBatch" parameterType="com.midea.logistics.lpc.domain.gen.entity.GenLog">
+        INSERT INTO gen_log (
+        <include refid="insertFields"/>
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.createUserCode},
+            #{item.updateUserCode},
+            #{item.deleteFlag},
+            #{item.version},
+            #{item.remark},
+            #{item.projectId},
+            #{item.authCode},
+            #{item.genPath}
+            )
+        </foreach>
+    </insert>
+
+    <!-- updateAll 更新(id必需，全量更新) -->
+    <update id="updateAll" parameterType="com.midea.logistics.lpc.domain.gen.entity.GenLog">
+        UPDATE gen_log
+        SET
+        <include refid="setAllFieldsSql"/>
+        WHERE
+        `delete_flag` = 0
+        AND `version` = #{version}
+        AND `id` = #{id}
+    </update>
+
+    <!-- updateSelective 更新(id必需，选择性更新) -->
+    <update id="updateSelective" parameterType="com.midea.logistics.lpc.domain.gen.entity.GenLog">
+        UPDATE gen_log
+        SET
+        <include refid="setSelectiveFieldsSql"/>
+        WHERE
+        `delete_flag` = 0
+        AND `version` = #{version}
+        AND `id` = #{id}
+    </update>
+
+    <!-- updateBatch 批量更新(id必需，全量更新)-->
+    <update id="updateBatch" parameterType="com.midea.logistics.lpc.domain.gen.entity.GenLog">
+        UPDATE gen_log
+        SET
+        <trim suffixOverrides=",">
+            `version` = `version` + 1,
+            `create_user_code` = CASE `id`
+            <foreach collection="list" item="item">
+                WHEN #{item.id} THEN #{item.createUserCode}
+            </foreach>
+            END,
+            `create_time` = CASE `id`
+            <foreach collection="list" item="item">
+                WHEN #{item.id} THEN #{item.createTime}
+            </foreach>
+            END,
+            `update_user_code` = CASE `id`
+            <foreach collection="list" item="item">
+                WHEN #{item.id} THEN #{item.updateUserCode}
+            </foreach>
+            END,
+            `update_time` = CASE `id`
+            <foreach collection="list" item="item">
+                WHEN #{item.id} THEN #{item.updateTime}
+            </foreach>
+            END,
+            `delete_flag` = CASE `id`
+            <foreach collection="list" item="item">
+                WHEN #{item.id} THEN #{item.deleteFlag}
+            </foreach>
+            END,
+            `remark` = CASE `id`
+            <foreach collection="list" item="item">
+                WHEN #{item.id} THEN #{item.remark}
+            </foreach>
+            END,
+            `project_id` = CASE `id`
+            <foreach collection="list" item="item">
+                WHEN #{item.id} THEN #{item.projectId}
+            </foreach>
+            END,
+            `auth_code` = CASE `id`
+            <foreach collection="list" item="item">
+                WHEN #{item.id} THEN #{item.authCode}
+            </foreach>
+            END,
+            `gen_path` = CASE `id`
+            <foreach collection="list" item="item">
+                WHEN #{item.id} THEN #{item.genPath}
+            </foreach>
+            END,
+        </trim>
+        WHERE
+        `delete_flag` = 0
+        AND `id` IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">#{item.id}</foreach>
+    </update>
+
+    <!-- delete 删除(逻辑) -->
+    <update id="delete" parameterType="java.lang.Long">
+        UPDATE gen_log
+        SET `delete_flag` = 1,
+            `version`     = `version` + 1
+        WHERE `delete_flag` = 0
+          AND `id` = #{id}
+    </update>
+
+    <!-- deleteBatch 批量删除 -->
+    <update id="deleteBatch" parameterType="java.util.List">
+        UPDATE gen_log
+        SET
+        `delete_flag` = 1,
+        `version` = `version` + 1
+        WHERE
+        `delete_flag` = 0
+        AND `id` IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">#{item}</foreach>
+    </update>
+
+    <!-- list 列表查询,不包含Blob -->
+    <select id="list" parameterType="com.midea.logistics.lpc.domain.gen.entity.GenLog"
+            resultType="com.midea.logistics.lpc.domain.gen.entity.GenLog">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        gen_log
+        <include refid="where"/>
+        <include refid="orderByAndLimitSql"/>
+    </select>
+
+</mapper>

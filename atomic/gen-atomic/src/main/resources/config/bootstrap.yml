@@ -1,0 +1,45 @@
+server:
+  port: 8051
+spring:
+  application:
+    name: logistics-transport-gen-atomic
+  profiles:
+    active: dev
+  cloud:
+    config:
+      profile: ${spring.profiles.active}
+      discovery:
+        enabled: true
+        serviceId: logistics-config-server
+
+logging:
+  level:
+    org.springframework.web: warn
+    com.midea.logistics: info
+  file:
+    name: ./logs/${spring.application.name}.log
+
+
+---
+spring:
+  profiles: dev
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+  client:
+    serviceUrl:
+      defaultZone: http://logistics-sit:logistics-sit@10.16.87.222:8761/eureka/
+
+---
+spring:
+  profiles: sit
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+  client:
+    serviceUrl:
+      defaultZone: http://logistics-sit:logistics-sit@10.16.87.222:8761/eureka/

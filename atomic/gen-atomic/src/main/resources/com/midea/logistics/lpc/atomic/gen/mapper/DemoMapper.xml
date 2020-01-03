@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.midea.logistics.lpc.atomic.gen.mapper.DemoMapper">
+
+    <!-- result 结果集 -->
+    <sql id="result">
+
+    </sql>
+    <!-- resultBlobs 基础结果集(包含BLOB) -->
+
+    <!-- where 条件集 -->
+
+    <!-- column 字段集 -->
+    <!-- columnWithBlobs 字段集(包含BLOB) -->
+
+    <!-- count 统计 -->
+    <!-- get 主键查询 -->
+    <!-- get 对象查询，要求唯一 -->
+    <!-- save 保存(有id为更新,无id为新增)一 -->
+    <!-- insert 新增(忽略id的存在性) -->
+    <!-- insert 批量新增(忽略id的存在性) -->
+    <!-- update 更新(id必需) -->
+    <!-- updateSelective 更新(选择性的更新) -->
+    <!-- update 批量更新(id必需，无选择性) -->
+    <!-- delete 删除(逻辑) -->
+    <!-- delete 批量删除 -->
+    <!-- list 列表查询,不包含Blob -->
+    <!-- page 分页查询,不包含Blob -->
+
+
+    <!-- // 示例查询 -->
+    <select id="demo" resultType="java.lang.Integer">
+        SELECT 1 count
+        FROM DUAL
+    </select>
+
+
+</mapper>
